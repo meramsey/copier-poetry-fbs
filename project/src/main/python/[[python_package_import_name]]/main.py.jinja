@@ -15,10 +15,10 @@ from PyQt5.QtWidgets import *
 # from PyQt5.QtWebEngineCore import *
 
 # import our local settings from settings.py
-from [[ python_package_import_name ]]settings import *
+from [[ python_package_import_name ]].settings import *
 
 # import our local aboutdialog from dialogs.py
-from [[ python_package_import_name ]]dialogs import AboutDialog
+from [[ python_package_import_name ]].dialogs import AboutDialog
 
 QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
 # https://leomoon.com/journal/python/high-dpi-scaling-in-pyqt5/
@@ -99,19 +99,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionCopy.setShortcuts(QKeySequence.Copy)
         self.actionPaste.setShortcuts(QKeySequence.Paste)
 
-        self.actionCut.setIcon(qIcon('scissors.png'))
-        self.actionCopy.setIcon(qIcon('copy.png'))
-        self.actionPaste.setIcon(qIcon('paste.png'))
+        self.actionCut.setIcon(qIcon('edit-cut.png'))
+        self.actionCopy.setIcon(qIcon('edit-copy.png'))
+        self.actionPaste.setIcon(qIcon('edit-paste.png'))
+        self.actionQuit.setIcon(qIcon('exit.png'))
 
         #Put all your custom signals slots and other code below here.
 
-        self.menuThemeGroup = QActionGroup(self)
-        self.menuThemeGroup.addAction(self.actionLight)
-        self.menuThemeGroup.addAction(self.actionDark)
-        self.menuThemeGroup.isExclusive()
-        self.actionLight.triggered.connect(self.change_theme_setting_light)
-        self.actionDark.triggered.connect(self.change_theme_setting_dark)
-        self.toggle_menu()
 
 # Put all your custom functions here
 
