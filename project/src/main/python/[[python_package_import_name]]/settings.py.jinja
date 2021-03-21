@@ -19,8 +19,8 @@ ui_path = lambda name: (os.path.join(ui_dir, name))
 ui_loader = lambda name, parent: uic.loadUi(ui_path(name), parent)
 
 # Setup Qsettings for app name
-app_settings = QtCore.QSettings('[[ python_package_distribution_name ]]', '[[ python_package_distribution_name ]]')
-config_data_dir = Path("[[ python_package_distribution_name ]]/[[ python_package_distribution_name ]]")
+app_settings = QtCore.QSettings('[[ python_package_distribution_name ]]', '[[ project_name ]]')
+config_data_dir = Path("[[ python_package_distribution_name ]]/[[ project_name ]]")
 
 # Define and setup and ensure app config path is writable
 app_config_data_dir = QStandardPaths.writableLocation(

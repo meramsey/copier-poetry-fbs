@@ -34,7 +34,7 @@ if is_mac():
 class AppContext(ApplicationContext):
     def run(self):
         version = self.build_settings['version']
-        QApplication.setApplicationName("[[ python_package_distribution_name ]]")
+        QApplication.setApplicationName("[[ project_name ]]")
         QApplication.setOrganizationName("[[ python_package_distribution_name ]]")
         QApplication.setOrganizationDomain("example.com")
         QApplication.setApplicationVersion(self.build_settings['version'])
