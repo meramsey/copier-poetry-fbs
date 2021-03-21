@@ -1,7 +1,10 @@
 import os
 import sys
 from fbs_runtime.platform import is_mac, is_linux, is_windows
-
+from pathlib import Path
+from PyQt5 import uic, QtWidgets, QtCore, QtGui
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 # Get absolute path to current dir app is running from even when frozen
 app_path = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])))
@@ -32,21 +35,22 @@ DataDirPath = lambda name: app_config_data_dir / name
 
 # Setup settings restoration
 
-if app_settings.contains("theme_selection"):
-    # there is the key in QSettings
-    print('Checking for theme preference in config')
-    theme_selection = app_settings.value('theme_selection')
-    print(f"Found theme_selection in config: {theme_selection}")
-else:
-    if not is_mac():
-        print('theme_selection not found in config. Using default Darkmode')
-        app_settings.setValue('theme_selection', 'Dark')
-        theme_selection = app_settings.value('theme_selection')
-    elif is_mac():
-        print('theme_selection not found in config. Using default Lightmode')
-        app_settings.setValue('theme_selection', 'Light')
-        theme_selection = app_settings.value('theme_selection')
-    pass
+# Example
+# if app_settings.contains("theme_selection"):
+#     # there is the key in QSettings
+#     print('Checking for theme preference in config')
+#     theme_selection = app_settings.value('theme_selection')
+#     print(f"Found theme_selection in config: {theme_selection}")
+# else:
+#     if not is_mac():
+#         print('theme_selection not found in config. Using default Darkmode')
+#         app_settings.setValue('theme_selection', 'Dark')
+#         theme_selection = app_settings.value('theme_selection')
+#     elif is_mac():
+#         print('theme_selection not found in config. Using default Lightmode')
+#         app_settings.setValue('theme_selection', 'Light')
+#         theme_selection = app_settings.value('theme_selection')
+#     pass
 
 
 

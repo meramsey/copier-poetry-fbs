@@ -6,7 +6,7 @@ from fbs_runtime.application_context import cached_property, \
     is_frozen
 from fbs_runtime.application_context.PyQt5 import ApplicationContext, \
     cached_property
-from PyQt5 import uic, QtWidgets, QtCore, QtGui,
+from PyQt5 import uic, QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -15,7 +15,10 @@ from PyQt5.QtWidgets import *
 # from PyQt5.QtWebEngineCore import *
 
 # import our local settings from settings.py
-from [[ python_package_import_name ]] import settings
+from [[ python_package_import_name ]]settings import *
+
+# import our local aboutdialog from dialogs.py
+from [[ python_package_import_name ]]dialogs import AboutDialog
 
 QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
 # https://leomoon.com/journal/python/high-dpi-scaling-in-pyqt5/
@@ -57,36 +60,6 @@ class AppContext(ApplicationContext):
     @cached_property
     def main_window(self):
         return MainWindow(self)
-
-    if theme_selection == 'Dark':
-        QApplication.setStyle("Fusion")
-        #
-        # # Now use a palette to switch to dark colors:
-        dark_palette = QPalette()
-        dark_palette.setColor(QPalette.Window, QColor(53, 53, 53))
-        dark_palette.setColor(QPalette.WindowText, Qt.white)
-        dark_palette.setColor(QPalette.Base, QColor(35, 35, 35))
-        dark_palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
-        dark_palette.setColor(QPalette.ToolTipBase, QColor(25, 25, 25))
-        dark_palette.setColor(QPalette.ToolTipText, Qt.white)
-        dark_palette.setColor(QPalette.Text, Qt.white)
-        dark_palette.setColor(QPalette.Button, QColor(53, 53, 53))
-        dark_palette.setColor(QPalette.ButtonText, Qt.white)
-        dark_palette.setColor(QPalette.BrightText, Qt.red)
-        dark_palette.setColor(QPalette.Link, QColor(42, 130, 218))
-        dark_palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
-        dark_palette.setColor(QPalette.HighlightedText, QColor(35, 35, 35))
-        dark_palette.setColor(QPalette.Active, QPalette.Button, QColor(53, 53, 53))
-        dark_palette.setColor(QPalette.Disabled, QPalette.ButtonText, Qt.darkGray)
-        dark_palette.setColor(QPalette.Disabled, QPalette.WindowText, Qt.darkGray)
-        dark_palette.setColor(QPalette.Disabled, QPalette.Text, Qt.darkGray)
-        dark_palette.setColor(QPalette.Disabled, QPalette.Light, QColor(53, 53, 53))
-        QApplication.setPalette(dark_palette)
-    elif theme_selection == 'Light':
-        QApplication.setStyle("")
-        pass
-    else:
-        pass
 
 
 # Setup MainWindow UI file object and class
@@ -151,21 +124,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.status_bar.showMessage(str(message), timeout)
         pass
 
-    def toggle_menu(self):
-        if theme_selection == 'Dark':
-            self.actionDark.setChecked(True)
-        elif theme_selection == 'Light':
-            self.actionLight.setChecked(True)
-        else:
-            pass
-
-    def change_theme_setting_light(self):
-        self.settings.setValue('theme_selection', 'Light')
-        dialog('Light Theme Selected. Please Restart the App now.')
-
-    def change_theme_setting_dark(self):
-        self.settings.setValue('theme_selection', 'Dark')
-        dialog('Dark Theme Selected. Please Restart the App now.')
 
     def closeEvent(self, event):
         # Now we define the closeEvent This is called whenever a window is closed. It is passed an event which we can
