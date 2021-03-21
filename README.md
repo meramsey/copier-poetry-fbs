@@ -57,7 +57,18 @@ You can then add all your custom widgets and signals and slots easily to the `sr
 
 To edit the GUI just open `src/main/python/{{your_app}}/ui/mainwindow.ui` file in Qt Designer and save and then rerun fbs run to see changes instantly.
 
-## Helpful Resources
-[fbs-documentation](https://build-system.fman.io/): FBS documentation for the fbs specific details.
+## Known Issues
+If using python 3.7 or higher with fbs it may complain due to the super low pinned pyinstaller version in fbs 0.9.0 which was the last one updated before pro. You can easily fix this by running the below which will ignore the dependency pinning to lower pyinstaller==3.4.
+```bash
+poetry run pip install pyinstaller==4.2
+```
 
-[LearnPyQt](https://www.learnpyqt.com/): Has some of the best video tutorials and up to date resources for PyQT/Pyside.
+It is a workaround, but is the best way to address that issue as poetry does not yet offer a clean way to ignore/override sub-dependencies.
+Reference: https://github.com/python-poetry/poetry/issues/697
+
+If you run a poetry update/install, you will want to just rerun the above command to upgrade pyinstaller forcibly to later version which supports python 3.7+ before trying to fbs freeze/installer/release.
+
+## Helpful Resources
+[fbs-documentation](https://build-system.fman.io/) : FBS documentation for the fbs specific details.
+
+[LearnPyQt](https://www.learnpyqt.com/) : Has some of the best video tutorials and up to date resources for PyQT/Pyside.

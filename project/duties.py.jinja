@@ -331,7 +331,7 @@ def create_installer(ctx, version):
     if not TESTING:
         ctx.run("git push", title="Pushing commits", pty=False)
         ctx.run("git push --tags", title="Pushing tags", pty=False)
-        ctx.run(f"fbs release {version}", title=f"Building and releasing {version} installer", pty=PTY)
+        ctx.run(f"poetry run pip install pyinstaller==4.2; fbs release {version}", title=f"Building and releasing {version} installer", pty=PTY)
         [%- if repository_provider == "github.com" %]
         docs_deploy.run()  # type: ignore
         [%- endif %]
