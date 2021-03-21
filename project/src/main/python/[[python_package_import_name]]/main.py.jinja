@@ -105,6 +105,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionQuit.setIcon(qIcon('exit.png'))
 
         #Put all your custom signals slots and other code below here.
+        self.actionAbout.triggered.connect(self.about_dialog)
 
 
 # Put all your custom functions here

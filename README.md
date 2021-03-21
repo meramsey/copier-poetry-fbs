@@ -8,7 +8,7 @@ but feel free to try it out, or fork it!
 ## Features
 
 - [Poetry](https://github.com/sdispater/poetry) setup, with pre-defined `pyproject.toml`
-- [FBS](https://github.com/mherrmann/fbs) setup, with pre-defined `base.json` and other needed boilerplate.
+- [FBS](https://github.com/mherrmann/fbs) setup, with pre-defined `base.json` and other needed boilerplate and setup with .ui mainwindow and about dialog with Qsettings.
 - Documentation built with [MkDocs](https://github.com/mkdocs/mkdocs)
   ([Material theme](https://github.com/squidfunk/mkdocs-material)
   and "autodoc" [mkdocstrings plugin](https://github.com/pawamoy/mkdocstrings))
@@ -46,3 +46,18 @@ copier "gl:mikeramsey/copier-poetry-fbs.git" /path/to/your/new/project
 
 See the [documentation](https://pawamoy.github.io/copier-poetry)
 for more details.
+
+## Modifying the template skeleton usage
+Once poetry venv is installed you can run the below to see the skeleton mainwindow.
+```bash
+fbs run
+```
+
+You can then add all your custom widgets and signals and slots easily to the `src/main/python/{{your_app}}/main.py` file.
+
+To edit the GUI just open `src/main/python/{{your_app}}/ui/mainwindow.ui` file in Qt Designer and save and then rerun fbs run to see changes instantly.
+
+## Helpful Resources
+[fbs-documentation](https://build-system.fman.io/): FBS documentation for the fbs specific details.
+
+[LearnPyQt](https://www.learnpyqt.com/): Has some of the best video tutorials and up to date resources for PyQT/Pyside.
