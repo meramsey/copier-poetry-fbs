@@ -11,3 +11,7 @@ pip-wheel-metadata/
 site/
 poetry.lock
 .venv/
+venv/
+# PyBuilder
+target/
+/target/

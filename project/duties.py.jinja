@@ -231,6 +231,7 @@ def clean(ctx):
     ctx.run("rm -rf site")
     ctx.run("find . -type d -name __pycache__ | xargs rm -rf")
     ctx.run("find . -name '*.rej' -delete")
+    ctx.run("fbs clean")
 
 
 @duty
@@ -305,6 +306,32 @@ def release(ctx, version):
         ctx.run("git push --tags", title="Pushing tags", pty=False)
         ctx.run("poetry build", title="Building dist/wheel", pty=PTY)
         ctx.run("poetry publish", title="Publishing version", pty=PTY)
+        [%- if repository_provider == "github.com" %]
+        docs_deploy.run()  # type: ignore
+        [%- endif %]
+
+
+@duty
+def create_installer(ctx, version):
+    """
+    Create an installer via FBS.
+
+    Arguments:
+        ctx: The context instance (passed automatically).
+        version: The new version number to use.
+    """
+    from fbs.builtin_commands._util import update_json
+    release_version = version
+    base_json = 'src/build/settings/base.json'
+    update_json(path(base_json), { 'version': release_version })
+    ctx.run(f"poetry version {version}", title=f"Bumping version in pyproject.toml to {version}", pty=PTY)
+    ctx.run("git add pyproject.toml CHANGELOG.md", title="Staging files", pty=PTY)
+    ctx.run(["git", "commit", "-m", f"chore: Prepare release {version}"], title="Committing changes", pty=PTY)
+    ctx.run(f"git tag {version}", title="Tagging commit", pty=PTY)
+    if not TESTING:
+        ctx.run("git push", title="Pushing commits", pty=False)
+        ctx.run("git push --tags", title="Pushing tags", pty=False)
+        ctx.run(f"fbs release {version}", title=f"Building and releasing {version} installer", pty=PTY)
         [%- if repository_provider == "github.com" %]
         docs_deploy.run()  # type: ignore
         [%- endif %]
