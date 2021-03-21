@@ -17,9 +17,6 @@ from PyQt5.QtWidgets import *
 # import our local settings from settings.py
 from [[ python_package_import_name ]].settings import *
 
-# import our local aboutdialog from dialogs.py
-from [[ python_package_import_name ]].dialogs import AboutDialog
-
 QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
 # https://leomoon.com/journal/python/high-dpi-scaling-in-pyqt5/
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)  # enable highdpi scaling
@@ -49,9 +46,13 @@ class AppContext(ApplicationContext):
         # print(self.settings.fileName())
         current_version = version
         self.settings.setValue('version', str(current_version))
+        self.appctx = appctxt
+        self.app_icon_path = self.appctx.get_resource('images')
+        self.qIcon = lambda name: QtGui.QIcon(os.path.join(self.app_icon_path, name))
+
         # Splash startup screen initialization
         self.splash = QSplashScreen(
-            QPixmap(os.path.join(app_icon_path, 'logo.png')))
+            QPixmap(os.path.join(self.app_icon_path, 'logo.png')))
         self.splash.show()
 
 
@@ -67,17 +68,18 @@ class AppContext(ApplicationContext):
         return MainWindow(self)
 
 
-# Setup MainWindow UI file object and class
-mainwindow_ui = ui_path("mainwindow.ui")  # Type your file path
-Ui_MainWindow, QtBaseClass = uic.loadUiType(mainwindow_ui)
-
-
-class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+class MainWindow(QMainWindow):
     def __init__(self, ctx):
         super(MainWindow, self).__init__()
+        mainwindow_ui = appctxt.get_resource("ui/mainwindow.ui")
+        uic.loadUi(mainwindow_ui, self)
         self.ctx = ctx
+        self.appctx = appctxt
         self.settings = self.ctx.settings
-        self.setupUi(self)
+        # Setup appctx override for inside mainwindow to utilize fbs: https://build-system.fman.io/manual/#get_resource
+        self.app_icon_path = self.appctx.get_resource('images')
+        qIcon = lambda name: QtGui.QIcon(os.path.join(self.app_icon_path, name))
+        # self.setupUi(self)
         # Initialize status bar
         self.status_bar = self.statusBar()
 
@@ -116,9 +118,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 # Put all your custom functions here
 
     def about_dialog(self):
-        about = AboutDialog(self)
-        self.show_status_bar_message('Activated About dialog', 10000)
-        pass
+        self.show_status_bar_message('Activated About Qaction', 10000)
+
 
     @QtCore.pyqtSlot()
     def show_status_bar_message(self, message, timeout=5000):
