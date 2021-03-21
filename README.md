@@ -41,7 +41,7 @@ copier "https://gitlab.com/mikeramsey/copier-poetry-fbs.git" /path/to/your/new/p
 Or even shorter:
 
 ```bash
-copier "gl:mikeramsey/copier-poetry-fbs" /path/to/your/new/project
+copier "gl:mikeramsey/copier-poetry-fbs.git" /path/to/your/new/project
 ```
 
 See the [documentation](https://pawamoy.github.io/copier-poetry)
