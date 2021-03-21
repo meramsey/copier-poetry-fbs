@@ -1,6 +1,6 @@
 # Copier Poetry
 
-Copier template for Poetry fbs based projects.
+Copier template for Poetry FBS based projects.
 
 This copier template is mainly for my own usage,
 but feel free to try it out, or fork it!
