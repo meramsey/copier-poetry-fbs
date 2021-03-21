@@ -1,6 +1,6 @@
 # Copier Poetry
 
-Copier template for Poetry projects.
+Copier template for Poetry fbs based projects.
 
 This copier template is mainly for my own usage,
 but feel free to try it out, or fork it!
@@ -8,6 +8,7 @@ but feel free to try it out, or fork it!
 ## Features
 
 - [Poetry](https://github.com/sdispater/poetry) setup, with pre-defined `pyproject.toml`
+- [FBS](https://github.com/mherrmann/fbs) setup, with pre-defined `base.json` and other needed boilerplate.
 - Documentation built with [MkDocs](https://github.com/mkdocs/mkdocs)
   ([Material theme](https://github.com/squidfunk/mkdocs-material)
   and "autodoc" [mkdocstrings plugin](https://github.com/pawamoy/mkdocstrings))
@@ -34,13 +35,13 @@ Make sure all the
 are met, then:
 
 ```bash
-copier "https://github.com/pawamoy/copier-poetry.git" /path/to/your/new/project
+copier "https://gitlab.com/mikeramsey/copier-poetry-fbs.git" /path/to/your/new/project
 ```
 
 Or even shorter:
 
 ```bash
-copier "gh:pawamoy/copier-poetry" /path/to/your/new/project
+copier "gl:mikeramsey/copier-poetry-fbs" /path/to/your/new/project
 ```
 
 See the [documentation](https://pawamoy.github.io/copier-poetry)
