@@ -49,12 +49,17 @@ class AppContext(ApplicationContext):
         # print(self.settings.fileName())
         current_version = version
         self.settings.setValue('version', str(current_version))
+        # Splash startup screen initialization
+        self.splash = QSplashScreen(
+            QPixmap(os.path.join(app_icon_path, 'logo.png')))
+        self.splash.show()
 
 
         # self.main_window.setWindowTitle("App Name v" + version)
         self.main_window.setWindowTitle(f"{QApplication.applicationName()} v{QApplication.applicationVersion()}")
 
         self.main_window.show()
+        self.splash.finish(self.main_window)
         return self.app.exec_()
 
     @cached_property
@@ -112,6 +117,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def about_dialog(self):
         about = AboutDialog(self)
+        self.show_status_bar_message('Activated About dialog', 10000)
         pass
 
     @QtCore.pyqtSlot()
