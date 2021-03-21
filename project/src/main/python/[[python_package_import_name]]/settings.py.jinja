@@ -1,0 +1,53 @@
+import os
+import sys
+from fbs_runtime.platform import is_mac, is_linux, is_windows
+
+
+# Get absolute path to current dir app is running from even when frozen
+app_path = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])))
+
+# Create app icons path from above and setup lambda to make it easy to use
+app_icon_path = os.path.join(app_path, 'images')
+qIcon = lambda name: QtGui.QIcon(os.path.join(app_icon_path, name))
+
+# Create ui files path from app path and setup lambda to make it easy to use
+ui_dir = os.path.join(app_path, 'ui')
+ui_path = lambda name: (os.path.join(ui_dir, name))
+ui_loader = lambda name, parent: uic.loadUi(ui_path(name), parent)
+
+# Setup Qsettings for app name
+app_settings = QtCore.QSettings('[[ python_package_distribution_name ]]', '[[ python_package_distribution_name ]]')
+config_data_dir = Path("[[ python_package_distribution_name ]]/[[ python_package_distribution_name ]]")
+
+# Define and setup and ensure app config path is writable
+app_config_data_dir = QStandardPaths.writableLocation(
+    QStandardPaths.AppConfigLocation) / config_data_dir
+
+os.makedirs(app_config_data_dir, exist_ok=True)
+
+# Lambda for referencing files in this path
+DataDirPath = lambda name: app_config_data_dir / name
+
+
+
+# Setup settings restoration
+
+if app_settings.contains("theme_selection"):
+    # there is the key in QSettings
+    print('Checking for theme preference in config')
+    theme_selection = app_settings.value('theme_selection')
+    print(f"Found theme_selection in config: {theme_selection}")
+else:
+    if not is_mac():
+        print('theme_selection not found in config. Using default Darkmode')
+        app_settings.setValue('theme_selection', 'Dark')
+        theme_selection = app_settings.value('theme_selection')
+    elif is_mac():
+        print('theme_selection not found in config. Using default Lightmode')
+        app_settings.setValue('theme_selection', 'Light')
+        theme_selection = app_settings.value('theme_selection')
+    pass
+
+
+
+# Define global variables

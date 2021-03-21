@@ -1,0 +1,195 @@
+import sys
+import os
+import subprocess
+from fbs_runtime.platform import *
+from fbs_runtime.application_context import cached_property, \
+    is_frozen
+from fbs_runtime.application_context.PyQt5 import ApplicationContext, \
+    cached_property
+from PyQt5 import uic, QtWidgets, QtCore, QtGui,
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+# from PyQt5.QtSql import *
+# from PyQt5.QtWebEngineWidgets import *
+# from PyQt5.QtWebEngineCore import *
+
+# import our local settings from settings.py
+from [[ python_package_import_name ]] import settings
+
+QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
+# https://leomoon.com/journal/python/high-dpi-scaling-in-pyqt5/
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)  # enable highdpi scaling
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)  # use highdpi icons
+
+if is_mac():
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_DontUseNativeMenuBar,
+                                        True)  # use non native Menu bar so all options work.
+
+
+
+class AppContext(ApplicationContext):
+    def run(self):
+        version = self.build_settings['version']
+        QApplication.setApplicationName("[[ python_package_distribution_name ]]")
+        QApplication.setOrganizationName("[[ python_package_distribution_name ]]")
+        QApplication.setOrganizationDomain("example.com")
+        QApplication.setApplicationVersion(self.build_settings['version'])
+        QCoreApplication.setApplicationVersion(self.build_settings['version'])
+        # Then we create a QSettings for our tool. Qt stores this using your company name and your application name
+        # This setting is then saved in the correct place for your user and their operating system
+        # Qt takes care of that for you, so you don't need to worry about handling it on different operating systems etc..
+        # Your company name can be just your name but should remain consistent between your tools.
+        # Your tool name should however be unique to each tool or application you create.
+        self.settings = QSettings()
+        # Uncommment the below line to see settings filename and path printed
+        # print(self.settings.fileName())
+        current_version = version
+        self.settings.setValue('version', str(current_version))
+
+
+        # self.main_window.setWindowTitle("App Name v" + version)
+        self.main_window.setWindowTitle(f"{QApplication.applicationName()} v{QApplication.applicationVersion()}")
+
+        self.main_window.show()
+        return self.app.exec_()
+
+    @cached_property
+    def main_window(self):
+        return MainWindow(self)
+
+    if theme_selection == 'Dark':
+        QApplication.setStyle("Fusion")
+        #
+        # # Now use a palette to switch to dark colors:
+        dark_palette = QPalette()
+        dark_palette.setColor(QPalette.Window, QColor(53, 53, 53))
+        dark_palette.setColor(QPalette.WindowText, Qt.white)
+        dark_palette.setColor(QPalette.Base, QColor(35, 35, 35))
+        dark_palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
+        dark_palette.setColor(QPalette.ToolTipBase, QColor(25, 25, 25))
+        dark_palette.setColor(QPalette.ToolTipText, Qt.white)
+        dark_palette.setColor(QPalette.Text, Qt.white)
+        dark_palette.setColor(QPalette.Button, QColor(53, 53, 53))
+        dark_palette.setColor(QPalette.ButtonText, Qt.white)
+        dark_palette.setColor(QPalette.BrightText, Qt.red)
+        dark_palette.setColor(QPalette.Link, QColor(42, 130, 218))
+        dark_palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+        dark_palette.setColor(QPalette.HighlightedText, QColor(35, 35, 35))
+        dark_palette.setColor(QPalette.Active, QPalette.Button, QColor(53, 53, 53))
+        dark_palette.setColor(QPalette.Disabled, QPalette.ButtonText, Qt.darkGray)
+        dark_palette.setColor(QPalette.Disabled, QPalette.WindowText, Qt.darkGray)
+        dark_palette.setColor(QPalette.Disabled, QPalette.Text, Qt.darkGray)
+        dark_palette.setColor(QPalette.Disabled, QPalette.Light, QColor(53, 53, 53))
+        QApplication.setPalette(dark_palette)
+    elif theme_selection == 'Light':
+        QApplication.setStyle("")
+        pass
+    else:
+        pass
+
+
+# Setup MainWindow UI file object and class
+mainwindow_ui = ui_path("mainwindow.ui")  # Type your file path
+Ui_MainWindow, QtBaseClass = uic.loadUiType(mainwindow_ui)
+
+
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+    def __init__(self, ctx):
+        super(MainWindow, self).__init__()
+        self.ctx = ctx
+        self.settings = self.ctx.settings
+        self.setupUi(self)
+        # Initialize status bar
+        self.status_bar = self.statusBar()
+
+        # Then we look at our settings to see if there is a setting called geometry saved. Otherwise we default to an empty string
+        # geometry = self.settings.value('geometry', bytes('', 'utf-8'))
+
+        # Then we call a Qt built in function called restoreGeometry that will restore whatever values we give it.
+        # In this case we give it the values from the settings file.
+        try:
+            if self.settings.contains("geometry"):
+                try:
+                    geometry = self.settings.value('geometry', bytes('', 'utf-8'))
+                    self.restoreGeometry(geometry)
+                except:
+                    pass
+            else:
+                print('Unable to restore geometry')
+                pass
+        except:
+            pass
+
+        # Setup keybindings for Edit
+        self.actionCut.setShortcuts(QKeySequence.Cut)
+        self.actionCopy.setShortcuts(QKeySequence.Copy)
+        self.actionPaste.setShortcuts(QKeySequence.Paste)
+
+        self.actionCut.setIcon(qIcon('scissors.png'))
+        self.actionCopy.setIcon(qIcon('copy.png'))
+        self.actionPaste.setIcon(qIcon('paste.png'))
+
+        #Put all your custom signals slots and other code below here.
+
+        self.menuThemeGroup = QActionGroup(self)
+        self.menuThemeGroup.addAction(self.actionLight)
+        self.menuThemeGroup.addAction(self.actionDark)
+        self.menuThemeGroup.isExclusive()
+        self.actionLight.triggered.connect(self.change_theme_setting_light)
+        self.actionDark.triggered.connect(self.change_theme_setting_dark)
+        self.toggle_menu()
+
+# Put all your custom functions here
+
+    def about_dialog(self):
+        about = AboutDialog(self)
+        pass
+
+    @QtCore.pyqtSlot()
+    def show_status_bar_message(self, message, timeout=5000):
+        self.status_bar.showMessage(str(message), timeout)
+        pass
+
+    def toggle_menu(self):
+        if theme_selection == 'Dark':
+            self.actionDark.setChecked(True)
+        elif theme_selection == 'Light':
+            self.actionLight.setChecked(True)
+        else:
+            pass
+
+    def change_theme_setting_light(self):
+        self.settings.setValue('theme_selection', 'Light')
+        dialog('Light Theme Selected. Please Restart the App now.')
+
+    def change_theme_setting_dark(self):
+        self.settings.setValue('theme_selection', 'Dark')
+        dialog('Dark Theme Selected. Please Restart the App now.')
+
+    def closeEvent(self, event):
+        # Now we define the closeEvent This is called whenever a window is closed. It is passed an event which we can
+        # choose to accept or reject, but in this case we'll just pass it on after we're done.
+
+        # First we need to get the current size and position of the window.
+        # This can be fetched using the built in saveGeometry() method.
+        # This is got back as a byte array. It won't really make sense to a human directly, but it makes sense to Qt.
+        geometry = self.saveGeometry()
+
+        # Once we know the geometry we can save it in our settings under geometry
+        self.settings.setValue('geometry', geometry)
+
+        # Finally we pass the event to the class we inherit from. It can choose to accept or reject the event,
+        # but we don't need to deal with it ourselves
+        super(MainWindow, self).closeEvent(event)
+
+        # Save settings: Define any other settings that should be saved on close.
+        # self.settings.setValue('setting_name', str(somevalue))
+
+
+import sys
+
+if __name__ == '__main__':
+    appctxt = AppContext()
+    exit_code = appctxt.run()
+    sys.exit(exit_code)
