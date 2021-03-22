@@ -323,7 +323,7 @@ def create_installer(ctx, version):
     from fbs.builtin_commands._util import update_json
     release_version = version
     base_json = 'src/build/settings/base.json'
-    update_json(path(base_json), { 'version': release_version })
+    update_json(base_json, {'version': release_version})
     ctx.run(f"poetry version {version}", title=f"Bumping version in pyproject.toml to {version}", pty=PTY)
     ctx.run("git add pyproject.toml CHANGELOG.md", title="Staging files", pty=PTY)
     ctx.run(["git", "commit", "-m", f"chore: Prepare release {version}"], title="Committing changes", pty=PTY)
