@@ -331,6 +331,32 @@ def create_installer(ctx, version):
     if not TESTING:
         ctx.run("git push", title="Pushing commits", pty=False)
         ctx.run("git push --tags", title="Pushing tags", pty=False)
+        ctx.run(f"poetry run pip install pyinstaller==4.2; fbs clean && fbs freeze && fbs installer {version}", title=f"Building and releasing {version} installer", pty=PTY)
+        [%- if repository_provider == "github.com" %]
+        docs_deploy.run()  # type: ignore
+        [%- endif %]
+
+
+@duty
+def release_installer(ctx, version):
+    """
+    Release an installer via FBS with upload and signing.
+
+    Arguments:
+        ctx: The context instance (passed automatically).
+        version: The new version number to use.
+    """
+    from fbs.builtin_commands._util import update_json
+    release_version = version
+    base_json = 'src/build/settings/base.json'
+    update_json(base_json, {'version': release_version})
+    ctx.run(f"poetry version {version}", title=f"Bumping version in pyproject.toml to {version}", pty=PTY)
+    ctx.run("git add pyproject.toml CHANGELOG.md", title="Staging files", pty=PTY)
+    ctx.run(["git", "commit", "-m", f"chore: Prepare release {version}"], title="Committing changes", pty=PTY)
+    ctx.run(f"git tag {version}", title="Tagging commit", pty=PTY)
+    if not TESTING:
+        ctx.run("git push", title="Pushing commits", pty=False)
+        ctx.run("git push --tags", title="Pushing tags", pty=False)
         ctx.run(f"poetry run pip install pyinstaller==4.2; fbs release {version}", title=f"Building and releasing {version} installer", pty=PTY)
         [%- if repository_provider == "github.com" %]
         docs_deploy.run()  # type: ignore
